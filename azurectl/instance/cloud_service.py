@@ -115,7 +115,7 @@ class CloudService(object):
             )
         try:
             add_cert_request = self.service.add_service_certificate(
-                cloud_service_name, base64.b64encode(pfx_cert), 'pfx', u''
+                cloud_service_name, base64.b64encode(pfx_cert), 'pfx', ''
             )
         except Exception as e:
             raise AzureCloudServiceAddCertificateError(

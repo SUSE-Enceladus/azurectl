@@ -15,7 +15,7 @@
 import re
 
 # project
-from commands.base import CliTask
+from .commands.base import CliTask
 
 
 class App(object):

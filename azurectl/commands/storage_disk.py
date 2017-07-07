@@ -70,7 +70,7 @@ from pytz import utc
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # project
-from base import CliTask
+from .base import CliTask
 from azurectl.account.service import AzureAccount
 from azurectl.help import Help
 from azurectl.logger import log
@@ -157,7 +157,7 @@ class StorageDiskTask(CliTask):
         except (KeyboardInterrupt):
             progress.shutdown()
             raise SystemExit('azurectl aborted by keyboard interrupt')
-        print
+        print()
         log.info('Uploaded %s', image)
 
     def __process_upload(self):

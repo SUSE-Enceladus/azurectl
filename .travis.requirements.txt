@@ -12,7 +12,6 @@ flake8
 python-dateutil
 docopt
 APScheduler
-pyliblzma
 coverage
 pyOpenSSL
 pytest

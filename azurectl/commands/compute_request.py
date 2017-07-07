@@ -32,7 +32,7 @@ options:
         request id number returned from azurectl for asynchronous request
 """
 # project
-from base import CliTask
+from .base import CliTask
 from azurectl.account.service import AzureAccount
 from azurectl.utils.collector import DataCollector
 from azurectl.utils.output import DataOutput

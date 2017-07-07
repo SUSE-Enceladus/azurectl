@@ -19,7 +19,7 @@ from OpenSSL.crypto import (
     FILETYPE_PEM
 )
 from tempfile import NamedTemporaryFile
-from urlparse import urlparse
+from urllib.parse import urlparse
 from azure.servicemanagement import ServiceManagementService
 import base64
 import re

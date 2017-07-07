@@ -1,5 +1,3 @@
-
-
 from azurectl.utils.filetype import FileType
 
 from azurectl.azurectl_exceptions import *

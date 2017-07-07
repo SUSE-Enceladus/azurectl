@@ -1,7 +1,7 @@
 import sys
 
 
-from test_helper import *
+from .test_helper import raises
 
 from azurectl.utils.collector import DataCollector
 

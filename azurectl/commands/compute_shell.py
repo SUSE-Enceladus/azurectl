@@ -24,7 +24,7 @@ from pprint import pprint
 from textwrap import dedent
 
 # project
-from base import CliTask
+from .base import CliTask
 from azurectl.account.service import AzureAccount
 
 
@@ -39,7 +39,7 @@ class ComputeShellTask(CliTask):
 
         service = account.get_management_service()
 
-        print dedent("""
+        print(dedent("""
             An instance of azure.servicemanagement.ServiceManagementService has
             been instantiated using the supplied credentials, as `service`.
             azurectl convenience models can be instantiated using the same
@@ -47,7 +47,7 @@ class ComputeShellTask(CliTask):
             the `pprint()` function to pretty-print results.
 
             When you're finished, exit with `exit()`
-        """)
+        """))
         code.interact(local={
             'account': account,
             'pprint': pprint,

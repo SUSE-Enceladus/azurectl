@@ -121,7 +121,7 @@ options:
 import os
 import time
 # project
-from base import CliTask
+from .base import CliTask
 from azurectl.account.service import AzureAccount
 from azurectl.utils.collector import DataCollector
 from azurectl.utils.output import DataOutput
@@ -208,7 +208,7 @@ class ComputeVmTask(CliTask):
         instance_type = self.command_args['--instance-type']
         if not instance_type:
             instance_type = 'Small'
-        fingerprint = u''
+        fingerprint = ''
         if self.command_args['--ssh-private-key-file']:
             fingerprint = self.cloud_service.add_certificate(
                 self.command_args['--cloud-service-name'],
@@ -374,7 +374,7 @@ class ComputeVmTask(CliTask):
         )
         self.out.display()
 
-    def __prepare_linux_configuration(self, fingerprint=u''):
+    def __prepare_linux_configuration(self, fingerprint=''):
         user = self.command_args['--user']
         instance_name = self.command_args['--instance-name']
         password = self.command_args['--password']

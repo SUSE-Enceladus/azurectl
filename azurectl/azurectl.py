@@ -15,10 +15,10 @@ import sys
 import docopt
 
 # project
-import logger
-from app import App
-from defaults import Defaults
-from azurectl_exceptions import AzureError
+from . import logger
+from .app import App
+from .defaults import Defaults
+from .azurectl_exceptions import AzureError
 
 
 def extras(help, version, options, doc):
@@ -49,7 +49,7 @@ def main():
         sys.exit(1)
     except docopt.DocoptExit as e:
         # exception caught by docopt, results in usage message
-        usage(e)
+        usage(format(e))
         sys.exit(1)
     except SystemExit:
         # user exception, program aborted by user
@@ -87,10 +87,10 @@ def usage(command_usage):
         if process_lines:
             global_options += format(line)
 
-    print 'usage: azurectl [global options] service <command> [<args>]\n'
-    print format(command_usage).replace('usage:', '      ')
+    print('usage: azurectl [global options] service <command> [<args>]\n')
+    print(format(command_usage).replace('usage:', '      '))
     if 'global options' not in command_usage:
-        print format(global_options)
+        print(format(global_options))
 
     if not format(command_usage).startswith('usage:'):
         error_details = format(command_usage).splitlines()[0]

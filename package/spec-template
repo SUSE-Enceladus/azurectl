@@ -1,26 +1,26 @@
 #
 # spec file for package python-azurectl
 #
-Name:           python-azurectl
+Name:           python3-azurectl
 Version:        %%VERSION
 Release:        0
 Url:            https://github.com/SUSE/azurectl
 Summary:        Command Line Interface to manage Microsoft Azure services
 License:        Apache-2.0
 Group:          Development/Languages/Python
-Source:         python-azurectl-%{version}.tar.gz
+Source:         python3-azurectl-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
-Requires:       python-docopt
-Requires:       python-APScheduler
-Requires:       python-pyliblzma
-Requires:       python-azure-sdk >= 1.0.3
-Requires:       python-azure-sdk-storage >= 0.30.0
-Requires:       python-dateutil
-Requires:       python-pyOpenSSL
-Requires:       python-setuptools
-Requires:       python-future
+BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
+Requires:       python3-docopt
+Requires:       python3-APScheduler
+Requires:       python3-azure-sdk >= 1.0.3
+Requires:       python3-azure-sdk-storage >= 0.30.0
+Requires:       python3-dateutil
+Requires:       python3-pyOpenSSL
+Requires:       python3-setuptools
+Requires:       python3-future
+Requires:       python3-six
 Requires:       man
 Requires:       openssl
 %if 0%{?suse_version} && 0%{?suse_version} <= 1110
@@ -38,10 +38,10 @@ multiple Azure Account Subscriptions.
 %setup -q -n azurectl-%{version}
 
 %build
-python setup.build.py build
+python3 setup.build.py build
 
 %install
-python setup.build.py install --prefix=%{_prefix} --root=%{buildroot}
+python3 setup.build.py install --prefix=%{_prefix} --root=%{buildroot}
 mkdir -p %{buildroot}/etc/bash_completion.d
 cp completion/azurectl.sh %{buildroot}/etc/bash_completion.d
 
@@ -53,7 +53,7 @@ done
 %files
 %defattr(-,root,root,-)
 %{_bindir}/azurectl
-%{python_sitelib}/*
+%{python3_sitelib}/*
 %config /etc/bash_completion.d/azurectl.sh
 %doc %{_mandir}/man1/*
 %changelog

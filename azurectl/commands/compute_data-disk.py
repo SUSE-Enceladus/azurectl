@@ -99,7 +99,7 @@ options:
 # project
 from azurectl.logger import log
 from azurectl.account.service import AzureAccount
-from base import CliTask
+from .base import CliTask
 from azurectl.utils.collector import DataCollector
 from azurectl.instance.data_disk import DataDisk
 from azurectl.utils.output import DataOutput

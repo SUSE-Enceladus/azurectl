@@ -1,9 +1,8 @@
 import sys
 from mock import patch
 
-
 import mock
-from test_helper import *
+from .test_helper import raises
 
 from azurectl.utils.output import DataOutput
 from azurectl.utils.collector import DataCollector
@@ -27,11 +26,17 @@ class TestDataOutput:
 
     @patch('sys.stdout')
     @patch('os.system')
-    def test_display_color(self, mock_system, mock_stdout):
+    @patch('azurectl.utils.output.NamedTemporaryFile')
+    def test_display_color(self, mock_temp, mock_system, mock_stdout):
+        tempfile = mock.Mock()
+        tempfile.name = 'tempfile'
+        mock_temp.return_value = tempfile
         self.out.style = 'color'
         self.out.color_json = True
         self.out.display()
-        assert mock_system.called
+        mock_system.assert_called_once_with(
+            'cat tempfile| pjson'
+        )
 
     @patch('sys.stdout')
     @patch('azurectl.logger.log.warning')

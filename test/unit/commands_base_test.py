@@ -5,7 +5,7 @@ from mock import patch
 
 import logging
 
-from test_helper import *
+from .test_helper import raises, argv_kiwi_tests
 
 import azurectl
 
@@ -16,6 +16,9 @@ from azure.servicemanagement.models import Operation
 
 
 class TestCliTask:
+    def teardown(self):
+        sys.argv = argv_kiwi_tests
+
     @raises(SystemExit)
     @patch('azurectl.commands.base.Help.show')
     def test_show_help(self, help_show):

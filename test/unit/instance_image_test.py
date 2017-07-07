@@ -5,7 +5,7 @@ import sys
 from collections import namedtuple
 from mock import (patch, call)
 
-from test_helper import *
+from .test_helper import raises
 
 from azure.servicemanagement.models import (
     OSImageDetails,

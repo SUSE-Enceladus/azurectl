@@ -5,7 +5,7 @@ from azure.common import AzureMissingResourceHttpError
 from collections import namedtuple
 from datetime import datetime
 from mock import patch
-from test_helper import *
+from .test_helper import raises
 
 from azurectl.account.service import AzureAccount
 from azurectl.azurectl_exceptions import *

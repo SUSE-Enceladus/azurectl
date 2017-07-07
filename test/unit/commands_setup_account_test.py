@@ -3,7 +3,7 @@ import mock
 from mock import patch
 
 
-from test_helper import *
+from .test_helper import raises, argv_kiwi_tests
 
 import azurectl
 from azurectl.azurectl_exceptions import *
@@ -23,6 +23,9 @@ class TestSetupAccountTask:
             return_value=mock.Mock()
         )
         self.task = SetupAccountTask()
+
+    def teardown(self):
+        sys.argv = argv_kiwi_tests
 
     def __init_command_args(self):
         self.task.command_args = {}

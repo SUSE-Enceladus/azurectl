@@ -2,13 +2,9 @@ import sys
 import mock
 from mock import patch
 from mock import call
-
-
-from test_helper import *
-
+from .test_helper import raises
 from azurectl.azurectl_exceptions import *
 from azurectl.storage.page_blob import PageBlob
-
 import azurectl
 
 
@@ -47,12 +43,12 @@ class TestPageBlob:
         PageBlob(self.blob_service, 'blob-name', 'container-name', 12)
 
     @raises(AzurePageBlobZeroPageError)
-    @patch('__builtin__.open')
+    @patch('builtins.open')
     def test_zero_page_read_failed(self, mock_open):
         mock_open.side_effect = Exception
         self.page_blob.next(self.data_stream)
 
-    @patch('__builtin__.open')
+    @patch('builtins.open')
     def test_zero_page_for_max_chunk_size(self, mock_open):
         self.page_blob.rest_bytes = self.blob_service.MAX_CHUNK_GET_SIZE
         mock_open.return_value = self.context_manager_mock
@@ -61,7 +57,7 @@ class TestPageBlob:
             self.blob_service.MAX_CHUNK_GET_SIZE
         )
 
-    @patch('__builtin__.open')
+    @patch('builtins.open')
     def test_zero_page_for_chunk(self, mock_open):
         self.page_blob.rest_bytes = 42
         mock_open.return_value = self.context_manager_mock

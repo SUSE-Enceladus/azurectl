@@ -4,7 +4,7 @@ import random
 from collections import namedtuple
 from datetime import datetime
 from mock import patch
-from test_helper import *
+from .test_helper import raises
 # mocks
 from azure.servicemanagement.models import (
     PersistentVMRole,

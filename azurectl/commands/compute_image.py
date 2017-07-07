@@ -127,7 +127,7 @@ from pytz import utc
 
 # project
 from azurectl.logger import log
-from base import CliTask
+from .base import CliTask
 from azurectl.account.service import AzureAccount
 from azurectl.utils.collector import DataCollector
 from azurectl.utils.output import DataOutput
@@ -251,7 +251,7 @@ class ComputeImageTask(CliTask):
             finally:
                 progress.shutdown()
         if not self.command_args['--quiet']:
-            print
+            print()
             log.info('Replicated %s', image_name)
 
     def __replication_status(self, image_name):
@@ -315,7 +315,7 @@ class ComputeImageTask(CliTask):
             'show_in_gui':
                 self.command_args['--show-in-gui'],
         }
-        for name, value in update_elements.iteritems():
+        for name, value in update_elements.items():
             if value is not None:
                 log.info('--> %s = %s', name, value)
         self.image.update(

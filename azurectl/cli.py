@@ -74,13 +74,13 @@ import re
 import os
 
 # project
-from defaults import Defaults
-from azurectl_exceptions import (
+from .defaults import Defaults
+from .azurectl_exceptions import (
     AzureUnknownServiceName,
     AzureCommandNotLoaded,
     AzureLoadCommandUndefined
 )
-from version import __VERSION__
+from .version import __VERSION__
 
 
 class Cli(object):
@@ -125,7 +125,7 @@ class Cli(object):
 
     def get_global_args(self):
         result = {}
-        for arg, value in self.all_args.iteritems():
+        for arg, value in self.all_args.items():
             if not arg == '<command>' and not arg == '<args>':
                 result[arg] = value
         return result
@@ -145,7 +145,7 @@ class Cli(object):
         if not os.path.exists(command_source_file):
             prefix = 'usage:'
             for service_command in self.__get_command_implementations(service):
-                print '%s azurectl %s' % (prefix, service_command)
+                print('%s azurectl %s' % (prefix, service_command))
                 prefix = '      '
             raise SystemExit
         self.loaded = importlib.import_module(

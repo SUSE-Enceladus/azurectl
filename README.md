@@ -247,33 +247,26 @@ for the desired Python version.
 
 The following procedure describes how to create such an environment:
 
-1. Install pyvenv and development dependencies
+1. Create the virtual environment:
 
     ```
-    $ sudo zypper in \
-          python-virtualenv python-devel libffi48-devel libopenssl-devel
+    $ python3 -m venv .env3
     ```
 
-2. Create the virtual environment:
+2. Activate the virtual environment:
 
     ```
-    $ virtualenv-2.7 .env2
+    $ source .env3/bin/activate
     ```
 
-3. Activate the virtual environment:
+3. Install azurectl requirements inside the virtual environment:
 
     ```
-    $ source .env2/bin/activate
+    $ pip install -U pip setuptools
+    $ pip install -r .virtualenv.dev-requirements.txt
     ```
 
-4. Install azurectl requirements inside the virtual environment:
-
-    ```
-    $ pip2.7 install -U pip setuptools
-    $ pip2.7 install -r .virtualenv.dev-requirements.txt
-    ```
-
-5. __Optional__ install of a custom Azure SDK version
+4. __Optional__ install of a custom Azure SDK version
 
     The installation of the azurectl requirements happens according to the
     pip registry. However azurectl depends on the Microsoft SDK. If the
@@ -288,7 +281,7 @@ The following procedure describes how to create such an environment:
     $ ./.install-azure-sdk-from-git
     ```
 
-6. Install azurectl in "development mode":
+5. Install azurectl in "development mode":
 
     ```
     $ ./setup.py develop

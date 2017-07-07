@@ -27,7 +27,7 @@ class FileType(object):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
-        self.filetype = file_info.communicate()[0]
+        self.filetype = file_info.communicate()[0].decode()
 
     def is_xz(self):
         if re.match('.*: XZ compressed', self.filetype):

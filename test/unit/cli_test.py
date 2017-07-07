@@ -1,7 +1,7 @@
 import sys
 
 
-from test_helper import *
+from .test_helper import raises, argv_kiwi_tests
 
 from azurectl.cli import Cli
 from azurectl.azurectl_exceptions import *
@@ -47,6 +47,9 @@ class TestCli:
         ]
         self.cli = Cli()
         self.loaded_command = self.cli.load_command()
+
+    def teardown(self):
+        sys.argv = argv_kiwi_tests
 
     def test_show_help(self):
         assert self.cli.show_help() is False

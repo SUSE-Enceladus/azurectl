@@ -45,15 +45,15 @@ class DataOutput(object):
             self._standard_json()
 
     def _standard_json(self):
-        print json.dumps(
+        print(json.dumps(
             self.data, sort_keys=True, indent=2, separators=(',', ': ')
-        )
+        ))
 
     def _color_json(self):
         out_file = NamedTemporaryFile()
         out_file.write(json.dumps(self.data, sort_keys=True))
         out_file.flush()
-        pjson_cmd = 'cat ' + out_file.name + '| pjson'
+        pjson_cmd = ''.join(['cat ', out_file.name, '| pjson'])
         os.system(pjson_cmd)
 
     def _which(self, cmd):

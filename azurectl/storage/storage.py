@@ -108,11 +108,7 @@ class Storage(object):
             )
 
     def disk_image_sas(
-        self,
-        container_name,
-        image_name,
-        start, expiry,
-        permissions
+        self, container_name, image_name, start, expiry, permissions
     ):
         sas = SharedAccessSignature(
             self.account_name, self.account_key
@@ -124,7 +120,7 @@ class Storage(object):
             expiry=expiry.strftime(ISO8061_FORMAT),
             start=start.strftime(ISO8061_FORMAT)
         )
-        return 'https://{}.blob.{}/{}/{}?{}'.format(
+        return 'https://{0}.blob.{1}/{2}/{3}?{4}'.format(
             self.account_name,
             self.blob_service_host_base,
             container_name,

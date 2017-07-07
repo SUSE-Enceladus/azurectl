@@ -3,7 +3,7 @@ import mock
 from mock import patch
 
 
-from test_helper import *
+from .test_helper import raises
 
 from azurectl.account.service import AzureAccount
 from azurectl.config.parser import Config
@@ -163,8 +163,8 @@ class TestCloudService:
         )
         mock_openssl.returncode = 0
         mock_popen.return_value = mock_openssl
-        mock_getpem.return_value = 'pem-base64-stream'
-        mock_base64.return_value = 'base64-pfx-stream'
+        mock_getpem.return_value = b'pem-base64-stream'
+        mock_base64.return_value = b'base64-pfx-stream'
         mock_fingerprint.return_value = 'finger-print'
         assert self.cloud_service.add_certificate(
             'cloud-service', 'ssh-private-key'
@@ -184,10 +184,10 @@ class TestCloudService:
             'pfx-data-stream'
         )
         self.mgmt_service.add_service_certificate.assert_called_once_with(
-            'cloud-service', 'base64-pfx-stream', 'pfx', u''
+            'cloud-service', b'base64-pfx-stream', 'pfx', ''
         )
         mock_fingerprint.assert_called_once_with(
-            'pem-base64-stream'
+            b'pem-base64-stream'
         )
 
     @patch('subprocess.Popen')
@@ -218,7 +218,7 @@ class TestCloudService:
         )
         mock_openssl.returncode = 0
         mock_popen.return_value = mock_openssl
-        self.cloud_service.get_fingerprint('pem-base64-stream')
+        self.cloud_service.get_fingerprint(b'pem-base64-stream')
         mock_popen.assert_called_once_with(
             [
                 'openssl', 'x509', '-noout', '-in', mock.ANY,
@@ -230,7 +230,7 @@ class TestCloudService:
 
     @raises(AzureCloudServiceOpenSSLError)
     def test_get_fingerprint_raise_openssl_error(self):
-        self.cloud_service.get_fingerprint('foo')
+        self.cloud_service.get_fingerprint(b'foo')
 
     @raises(AzureCloudServiceOpenSSLError)
     def test_get_pem_certificate_raise_openssl_error(self):
@@ -246,7 +246,7 @@ class TestCloudService:
         )
         mock_openssl.returncode = 1
         mock_popen.return_value = mock_openssl
-        mock_getpem.return_value = 'pem-base64-stream'
+        mock_getpem.return_value = b'pem-base64-stream'
         self.cloud_service.add_certificate(
             'cloud-service', '../data/id_test'
         )

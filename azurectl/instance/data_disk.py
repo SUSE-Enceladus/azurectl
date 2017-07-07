@@ -122,7 +122,7 @@ class DataDisk(object):
             instance_name = cloud_service_name
 
         disks = []
-        luns = [at_lun] if at_lun is not None else range(Defaults.max_vm_luns())
+        luns = [at_lun] if at_lun is not None else list(range(Defaults.max_vm_luns()))
         for lun in luns:
             try:
                 disks.append(self.service.get_data_disk(
@@ -147,7 +147,7 @@ class DataDisk(object):
         if not instance_name:
             instance_name = cloud_service_name
 
-        if lun not in range(Defaults.max_vm_luns()):
+        if lun not in list(range(Defaults.max_vm_luns())):
             lun = self.__get_first_available_lun(
                 cloud_service_name, instance_name
             )
@@ -359,7 +359,7 @@ class DataDisk(object):
         )
         # hex representation of seconds since january 1st 2000
         timestamp = bytearray.fromhex(
-            hex(long(datetime.now().strftime('%s')) - 946684800).replace(
+            hex(int(datetime.now().strftime('%s')) - 946684800).replace(
                 'L', ''
             ).replace('0x', '').zfill(8))
         # ascii code for 'wa' = windowsazure

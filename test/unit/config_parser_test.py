@@ -2,7 +2,7 @@ import mock
 
 from mock import patch
 
-from test_helper import *
+from .test_helper import raises
 
 from azurectl.azurectl_exceptions import *
 from azurectl.config.parser import Config

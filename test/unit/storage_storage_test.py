@@ -4,15 +4,11 @@ import sys
 import mock
 from mock import patch
 from mock import call
-from urlparse import urlparse
-
-from test_helper import *
-
+from urllib.parse import urlparse
+from .test_helper import raises
 from azurectl.azurectl_exceptions import *
 from azurectl.storage.storage import Storage
-
 import azurectl
-
 from collections import namedtuple
 
 
@@ -96,7 +92,7 @@ class TestStorage:
         stream.close.assert_called_once_with()
 
     @patch('azurectl.storage.storage.PageBlob')
-    @patch('__builtin__.open')
+    @patch('builtins.open')
     @patch('os.path.getsize')
     def test_upload_uncompressed(
         self, mock_uncompressed_size, mock_open, mock_page_blob
@@ -192,8 +188,8 @@ class TestStorage:
         assert parsed.netloc == self.storage.account_name + \
             '.blob.core.windows.net'
         assert parsed.path == '/' + container + '/' + image
-        assert 'st=2015-01-01T00%3A00%3A00Z&' in parsed.query
+        assert 'st=2015-01-01T00%3A00%3A00Z' in parsed.query
         assert 'se=2015-12-31T00%3A00%3A00Z' in parsed.query
-        assert 'sp=rl&' in parsed.query
-        assert 'sr=b&' in parsed.query
+        assert 'sp=rl' in parsed.query
+        assert 'sr=b' in parsed.query
         assert 'sig=' in parsed.query  # can't actively validate the signature

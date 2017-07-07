@@ -3,9 +3,9 @@ import sys
 import mock
 from mock import patch
 
-from urlparse import urlparse
+from urllib.parse import urlparse
 
-from test_helper import *
+from .test_helper import raises
 
 from azurectl.azurectl_exceptions import *
 from azurectl.storage.fileshare import FileShare

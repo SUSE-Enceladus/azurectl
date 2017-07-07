@@ -139,6 +139,6 @@ class Container(object):
             expiry=expiry.strftime(ISO8061_FORMAT),
             start=start.strftime(ISO8061_FORMAT)
         )
-        return 'https://{}.blob.core.windows.net/{}?{}'.format(
+        return 'https://{0}.blob.core.windows.net/{1}?{2}'.format(
             self.account_name, container, signed_query
         )

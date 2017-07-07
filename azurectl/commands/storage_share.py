@@ -36,7 +36,7 @@ options:
         name of the files share
 """
 # project
-from base import CliTask
+from .base import CliTask
 from azurectl.account.service import AzureAccount
 from azurectl.utils.collector import DataCollector
 from azurectl.utils.output import DataOutput

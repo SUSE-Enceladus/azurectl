@@ -5,7 +5,7 @@ from mock import patch
 from mock import call
 
 
-from test_helper import *
+from .test_helper import raises
 
 from azurectl.account.service import AzureAccount
 from azurectl.config.parser import Config

@@ -13,7 +13,7 @@
 #
 import subprocess
 # project
-from azurectl_exceptions import AzureHelpNoCommandGiven
+from .azurectl_exceptions import AzureHelpNoCommandGiven
 
 
 class Help(object):

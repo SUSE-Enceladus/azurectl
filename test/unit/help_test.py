@@ -2,7 +2,7 @@ import sys
 
 from mock import patch
 
-from test_helper import *
+from .test_helper import raises
 
 from azurectl.help import Help
 from azurectl.azurectl_exceptions import *

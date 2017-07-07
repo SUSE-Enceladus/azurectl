@@ -2,8 +2,7 @@ import sys
 import mock
 from mock import patch
 
-
-from test_helper import *
+from .test_helper import raises
 
 import azurectl
 from azurectl.utils.validations import Validations

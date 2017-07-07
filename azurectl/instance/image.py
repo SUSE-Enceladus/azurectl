@@ -264,7 +264,7 @@ class Image(object):
         ordered_update_record = collections.OrderedDict(
             sorted(update_record.items())
         )
-        for name, value in ordered_update_record.iteritems():
+        for name, value in ordered_update_record.items():
             if value is not None:
                 if '_date' in name:
                     value = self.__convert_date_to_azure_format(value)

@@ -2,7 +2,7 @@ import sys
 import mock
 from mock import patch
 from mock import call
-from test_helper import *
+from .test_helper import raises
 
 from azurectl.azurectl_exceptions import (
     AzureConfigParseError,
@@ -257,7 +257,7 @@ class TestAccountSetup:
         )
         assert setup.list()['account_region_map']['region'] == 'region:earth'
 
-    @patch('__builtin__.open')
+    @patch('builtins.open')
     @patch('os.path.exists')
     @patch('os.makedirs')
     def test_add_creates_dir(self, mock_makedirs, mock_exists, mock_open):
@@ -315,7 +315,7 @@ class TestAccountSetup:
         assert self.setup.remove_region('foofoo') is False
 
     @raises(AzureConfigWriteError)
-    @patch('__builtin__.open')
+    @patch('builtins.open')
     def test_write_raise(self, mock_open):
         mock_open.side_effect = AzureConfigWriteError
         self.setup.filename = '/some-config'

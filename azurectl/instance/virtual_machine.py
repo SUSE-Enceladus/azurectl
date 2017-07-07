@@ -43,7 +43,7 @@ class VirtualMachine(object):
     def create_linux_configuration(
         self, username='azureuser', instance_name=None,
         disable_ssh_password_authentication=True,
-        password=None, custom_data=None, fingerprint=u''
+        password=None, custom_data=None, fingerprint=''
     ):
         """
             create a linux configuration

@@ -34,40 +34,30 @@ class XZ(object):
         self.lzma_stream = lzma_stream
         self.buffer_size = int(buffer_size)
         self.lzma = lzma.LZMADecompressor()
-        self.finished = False
 
     def read(self, size):
-        if self.finished:
-            # lzma stream end already reached
+        if self.lzma.eof:
             return None
         chunks = self.lzma.decompress(
-            self.lzma.unconsumed_tail, size
+            self.lzma.unused_data + self.lzma_stream.read(self.buffer_size)
         )
-        bytes_unpacked = len(chunks)
-        if bytes_unpacked == size:
-            # first decompression already completed the requested size
-            return chunks
-        while True:
-            lzma_chunk = self.lzma_stream.read(self.buffer_size)
-            if not lzma_chunk:
-                if self.lzma.flush():
-                    # must have zero data, otherwise raise
-                    raise AssertionError
-                # there is one superfluous newline with the last chunk
-                chunks = chunks[:-1]
-                self.finished = True
-                break
-            else:
-                chunk = self.lzma.decompress(
-                    self.lzma.unconsumed_tail + lzma_chunk,
-                    size - bytes_unpacked
-                )
-                chunks += chunk
-                bytes_unpacked += len(chunk)
-                if bytes_unpacked == size:
-                    # requested size unpacked
-                    break
-        return chunks
+        bytes_uncompressed = len(chunks)
+        while not self.lzma.eof and bytes_uncompressed < size:
+            # Because the max_length parameter was added to the decompress()
+            # method with python 3.5 for the first time and we have to stay
+            # compatible with 3.4 the given size argument to this method can
+            # only be treated as a minimum size constraint which has to be
+            # valid but can not be used as exact value unless the buffer_size
+            # is set to 1
+            chunks += self.lzma.decompress(
+                self.lzma.unused_data + self.lzma_stream.read(self.buffer_size)
+            )
+            bytes_uncompressed = len(chunks)
+        if self.lzma.eof:
+            # there is one superfluous newline with the last chunk
+            chunks = chunks[:-1]
+
+        return chunks.decode()
 
     @classmethod
     def close(self):
@@ -88,5 +78,5 @@ class XZ(object):
         output, error = xz_info.communicate()
         if xz_info.returncode != 0:
             raise AzureXZError('%s' % error)
-        total = output.strip().split('\n').pop()
+        total = output.decode().strip().split('\n').pop()
         return int(total.split()[4])

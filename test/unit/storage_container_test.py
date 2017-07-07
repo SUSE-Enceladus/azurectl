@@ -3,9 +3,9 @@ import sys
 import mock
 from mock import patch
 
-from urlparse import urlparse
+from urllib.parse import urlparse
 
-from test_helper import *
+from .test_helper import raises
 
 from azurectl.azurectl_exceptions import *
 from azurectl.storage.container import Container
@@ -115,10 +115,10 @@ class TestContainer:
         assert parsed.netloc == MOCK_STORAGE_NAME + \
             '.blob.core.windows.net'
         assert parsed.path == '/' + container
-        assert 'st=2015-01-01T00%3A00%3A00Z&' in parsed.query
+        assert 'st=2015-01-01T00%3A00%3A00Z' in parsed.query
         assert 'se=2015-12-31T00%3A00%3A00Z' in parsed.query
-        assert 'sp=rl&' in parsed.query
-        assert 'sr=c&' in parsed.query
+        assert 'sp=rl' in parsed.query
+        assert 'sr=c' in parsed.query
         assert 'sig=' in parsed.query  # can't actively validate the signature
 
     @patch('azurectl.storage.container.BaseBlobService.get_container_properties')

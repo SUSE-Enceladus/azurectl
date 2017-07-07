@@ -28,7 +28,7 @@ function _azurectl {
                 return 0
                 ;;
             "endpoint")
-                __comp_reply "help show create list --help delete"
+                __comp_reply "help show create list update --help delete"
                 return 0
                 ;;
             "container")
@@ -52,7 +52,7 @@ function _azurectl {
                 return 0
                 ;;
             "vm")
-                __comp_reply "help show create reboot regions shutdown --help types delete"
+                __comp_reply "status help show create reboot regions start shutdown --help types delete"
                 return 0
                 ;;
             "data-disk")
@@ -83,6 +83,10 @@ function _azurectl {
                 __comp_reply "--name"
                 return 0
                 ;;
+            "start")
+                __comp_reply "--cloud-service-name --instance-name --wait"
+                return 0
+                ;;
             "create")
                 __comp_reply "--label --disk-basename --size --name --blob-name --wait --password --ssh-private-key-file --cloud-service-name --fingerprint --reserved-ip-name --user --instance-name --instance-type --image-name --custom-data --ssh-port --instance-port --port --idle-timeout --udp --locally-redundant --read-access-geo-redundant --description --geo-redundant --zone-redundant"
                 return 0
@@ -104,7 +108,7 @@ function _azurectl {
                 return 0
                 ;;
             "status")
-                __comp_reply "--id"
+                __comp_reply "--id --cloud-service-name --instance-name"
                 return 0
                 ;;
             "configure")
@@ -116,7 +120,7 @@ function _azurectl {
                 return 0
                 ;;
             "update")
-                __comp_reply "--recommended-vm-size --eula --description --image-family --privacy-uri --icon-uri --name --small-icon-uri --label --show-in-gui --language --published-date --new-secondary-key --locally-redundant --read-access-geo-redundant --wait --geo-redundant --zone-redundant --new-primary-key"
+                __comp_reply "--recommended-vm-size --eula --description --image-family --privacy-uri --icon-uri --name --small-icon-uri --label --show-in-gui --language --published-date --instance-port --port --wait --cloud-service-name --tcp --instance-name --idle-timeout --udp --new-secondary-key --locally-redundant --read-access-geo-redundant --geo-redundant --zone-redundant --new-primary-key"
                 return 0
                 ;;
             "detach")

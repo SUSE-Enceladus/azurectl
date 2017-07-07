@@ -4,7 +4,7 @@ import mock
 from mock import patch
 
 
-from test_helper import *
+from .test_helper import raises
 
 import datetime
 import azurectl

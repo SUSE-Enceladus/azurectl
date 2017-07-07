@@ -1,7 +1,7 @@
 
 from mock import patch
 
-from test_helper import *
+from .test_helper import raises
 import mock
 
 from azurectl.azurectl_exceptions import *

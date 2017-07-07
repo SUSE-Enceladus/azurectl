@@ -1,7 +1,7 @@
 import sys
 import mock
 from mock import patch
-from test_helper import *
+from .test_helper import raises, argv_kiwi_tests
 
 import azurectl
 import importlib
@@ -45,6 +45,9 @@ class TestComputeDataDiskTask:
         self.disk_url = ('https://foo/bar/' + self.disk_filename)
         self.disk_label = 'Mock data disk'
         self.disk_size = 42
+
+    def teardown(self):
+        sys.argv = argv_kiwi_tests
 
     def __init_command_args(self, overrides=None):
         '''

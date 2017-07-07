@@ -80,7 +80,7 @@ options:
 import os
 
 # project
-from base import CliTask
+from .base import CliTask
 from azurectl.logger import log
 from azurectl.help import Help
 from azurectl.account.setup import AccountSetup

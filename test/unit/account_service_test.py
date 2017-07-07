@@ -2,7 +2,7 @@ import mock
 from mock import patch
 
 
-from test_helper import *
+from .test_helper import raises
 
 from azurectl.azurectl_exceptions import *
 
@@ -15,7 +15,11 @@ from collections import namedtuple
 
 
 class TestAzureAccount:
-    def setup(self):
+    @patch('azurectl.account.service.NamedTemporaryFile')
+    def setup(self, mock_temp):
+        tempfile = mock.Mock()
+        tempfile.name = 'tempfile'
+        mock_temp.return_value = tempfile
         self.account = AzureAccount(
             Config(
                 region_name='East US 2', filename='../data/config'
@@ -23,7 +27,9 @@ class TestAzureAccount:
         )
         azurectl.account.service.load_pkcs12 = mock.Mock()
 
-    def __mock_management_service(self, endpoint, service_response=None, side_effect=None):
+    def __mock_management_service(
+        self, endpoint, service_response=None, side_effect=None
+    ):
         mock_service_function = mock.Mock()
         if side_effect:
             mock_service_function.side_effect = side_effect
@@ -39,13 +45,12 @@ class TestAzureAccount:
     @patch('azurectl.account.service.dump_privatekey')
     @patch('azurectl.account.service.dump_certificate')
     @patch('azurectl.account.service.AzureAccount.get_management_url')
+    @patch('azurectl.account.service.AzureAccount.certificate_filename')
     def test_service_error(
-        self,
-        mock_mgmt_url,
-        mock_dump_certificate,
-        mock_dump_pkey,
-        mock_service
+        self, mock_mgmt_cert, mock_mgmt_url, mock_dump_certificate,
+        mock_dump_pkey, mock_service
     ):
+        mock_mgmt_cert.return_value = 'certfile'
         mock_mgmt_url.return_value = 'test.url'
         mock_dump_certificate.return_value = 'abc'
         mock_dump_pkey.return_value = 'abc'
@@ -64,7 +69,7 @@ class TestAzureAccount:
     def test_subscription_cert_decode_error(
         self, mock_dump_certificate, mock_dump_pkey
     ):
-        mock_dump_pkey.return_value = 'abc'
+        mock_dump_pkey.return_value = b'abc'
         mock_dump_certificate.side_effect = \
             AzureSubscriptionCertificateDecodeError
         self.account.get_management_service()
@@ -227,6 +232,15 @@ class TestAzureAccount:
         assert account.certificate_filename() == '../data/pemfile'
         assert account.subscription_id() == 'id1234'
 
+    @patch('azurectl.account.service.dump_privatekey')
+    @patch('azurectl.account.service.dump_certificate')
+    def test_config_create_cert_from_publishsettings(
+        self, mock_dump_certificate, mock_dump_pkey
+    ):
+        mock_dump_pkey.return_value = b'abc'
+        mock_dump_certificate.return_value = b'cert'
+        assert self.account.certificate_filename() == 'tempfile'
+
     @raises(AzureConfigVariableNotFound)
     def test_config_must_have_management_url_or_publishsettings(self):
         account = AzureAccount(
@@ -255,12 +269,14 @@ class TestAzureAccount:
         self.__mock_management_service(
             'get_storage_account_keys',
             keys(storage_service_keys=primary(primary='foo'))
-                                       )
+        )
         assert self.account.storage_key() == 'foo'
 
     @raises(AzureServiceManagementError)
     def test_storage_key_error(self):
-        self.__mock_management_service('get_storage_account_keys', None, side_effect=Exception)
+        self.__mock_management_service(
+            'get_storage_account_keys', None, side_effect=Exception
+        )
         self.account.storage_key()
 
     @patch('azurectl.account.service.ServiceManagementService')
@@ -317,18 +333,18 @@ class TestAzureAccount:
                 'virtual_machines_role_sizes': [],
                 'web_worker_role_sizes': []
             },
-            display_name=u'Mock Region',
-            available_services=[u'Compute',
-                    u'Storage',
-                    u'PersistentVMRole',
-                    u'HighMemory']
+            display_name='Mock Region',
+            available_services=['Compute',
+                    'Storage',
+                    'PersistentVMRole',
+                    'HighMemory']
         )
-        mock_location.configure_mock(name=u'Mock Region')
+        mock_location.configure_mock(name='Mock Region')
         self.__mock_management_service('list_locations', [mock_location])
         # when
         result = self.account.locations()
         # then
-        assert result == [u'Mock Region']
+        assert result == ['Mock Region']
 
     def test_filtered_locations(self):
         # given
@@ -337,19 +353,19 @@ class TestAzureAccount:
                 'virtual_machines_role_sizes': [],
                 'web_worker_role_sizes': []
             },
-            display_name=u'Mock Region',
-            available_services=[u'Compute',
-                    u'Storage',
-                    u'PersistentVMRole',
-                    u'HighMemory']
+            display_name='Mock Region',
+            available_services=['Compute',
+                    'Storage',
+                    'PersistentVMRole',
+                    'HighMemory']
         )
-        mock_location.configure_mock(name=u'Mock Region')
+        mock_location.configure_mock(name='Mock Region')
         self.__mock_management_service('list_locations', [mock_location])
         self.account.certificate_filename = mock.Mock()
         # when
         result = self.account.locations('Compute')
         # then
-        assert result == [u'Mock Region']
+        assert result == ['Mock Region']
         # when
         result = self.account.locations('foo')
         # then

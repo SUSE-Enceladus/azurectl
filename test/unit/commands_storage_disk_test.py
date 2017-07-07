@@ -4,8 +4,9 @@ import sys
 import mock
 from mock import patch
 
+import azurectl
 
-from test_helper import *
+from .test_helper import raises, argv_kiwi_tests
 from azurectl.azurectl_exceptions import *
 from azurectl.commands.storage_disk import StorageDiskTask
 
@@ -32,6 +33,9 @@ class TestStorageDiskTask:
         )
         self.task = StorageDiskTask()
         self.__init_command_args()
+
+    def teardown(self):
+        sys.argv = argv_kiwi_tests
 
     def __init_command_args(self):
         self.task.command_args = {}
