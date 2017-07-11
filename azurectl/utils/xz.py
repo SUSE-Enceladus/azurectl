@@ -11,11 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import subprocess
 import lzma
-
-# project
-from azurectl.azurectl_exceptions import AzureXZError
+import os
 
 
 class XZ(object):
@@ -31,9 +28,9 @@ class XZ(object):
         self.lzma_stream.close()
 
     def __init__(self, lzma_stream, buffer_size=LZMA_STREAM_BUFFER_SIZE):
-        self.lzma_stream = lzma_stream
         self.buffer_size = int(buffer_size)
         self.lzma = lzma.LZMADecompressor()
+        self.lzma_stream = lzma_stream
 
     def read(self, size):
         if self.lzma.eof:
@@ -70,13 +67,6 @@ class XZ(object):
 
     @classmethod
     def uncompressed_size(self, file_name):
-        xz_info = subprocess.Popen(
-            ['xz', '--robot', '--list', file_name],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
-        output, error = xz_info.communicate()
-        if xz_info.returncode != 0:
-            raise AzureXZError('%s' % error)
-        total = output.decode().strip().split('\n').pop()
-        return int(total.split()[4])
+        with lzma.open(file_name) as lzma_stream:
+            lzma_stream.seek(0, os.SEEK_END)
+            return lzma_stream.tell()

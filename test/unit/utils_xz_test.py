@@ -5,7 +5,6 @@ from .test_helper import raises
 import mock
 
 from azurectl.utils.xz import XZ
-from azurectl.azurectl_exceptions import *
 
 
 class TestXZ:
@@ -39,14 +38,3 @@ class TestXZ:
 
     def test_uncompressed_size(self):
         assert XZ.uncompressed_size('../data/blob.xz') == 4
-
-    @raises(AzureXZError)
-    @patch('subprocess.Popen')
-    def test_uncompressed_size_raise(self, mock_popen):
-        mock_xz = mock.Mock()
-        mock_xz.communicate = mock.Mock(
-            return_value=['data', 'error']
-        )
-        mock_popen.returncode = 1
-        mock_popen.return_value = mock_xz
-        XZ.uncompressed_size('../data/blob.xz')

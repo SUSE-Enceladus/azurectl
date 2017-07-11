@@ -407,7 +407,3 @@ class AzureVmShutdownError(AzureError):
 
 class AzureVmStartError(AzureError):
     pass
-
-
-class AzureXZError(AzureError):
-    pass
