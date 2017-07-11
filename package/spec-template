@@ -1,14 +1,14 @@
 #
 # spec file for package python-azurectl
 #
-Name:           python3-azurectl
+Name:           python-azurectl
 Version:        %%VERSION
 Release:        0
 Url:            https://github.com/SUSE/azurectl
 Summary:        Command Line Interface to manage Microsoft Azure services
 License:        Apache-2.0
 Group:          Development/Languages/Python
-Source:         python3-azurectl-%{version}.tar.gz
+Source:         python-azurectl-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
@@ -16,11 +16,9 @@ Requires:       python3-docopt
 Requires:       python3-APScheduler
 Requires:       python3-azure-sdk >= 1.0.3
 Requires:       python3-azure-sdk-storage >= 0.30.0
-Requires:       python3-dateutil
+Requires:       python3-python-dateutil
 Requires:       python3-pyOpenSSL
 Requires:       python3-setuptools
-Requires:       python3-future
-Requires:       python3-six
 Requires:       man
 Requires:       openssl
 %if 0%{?suse_version} && 0%{?suse_version} <= 1110

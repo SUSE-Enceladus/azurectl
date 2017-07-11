@@ -37,12 +37,12 @@ build: flake8 test completion doc
 	# package should handle package/version requirements
 	cat setup.py | sed -e 's@>=[0-9.]*@@g' > setup.build.py
 	python setup.build.py sdist
-	mv dist/azurectl-${version}.tar.gz dist/python3-azurectl-${version}.tar.gz
+	mv dist/azurectl-${version}.tar.gz dist/python-azurectl-${version}.tar.gz
 	rm setup.build.py
 	git log | tools/changelog_generator |\
-		tools/changelog_descending > dist/python3-azurectl.changes
+		tools/changelog_descending > dist/python-azurectl.changes
 	cat package/spec-template | sed -e s'@%%VERSION@${version}@' \
-		> dist/python3-azurectl.spec
+		> dist/python-azurectl.spec
 	rm -rf dist/azurectl-${version}
 
 clean:
@@ -59,5 +59,5 @@ tar:
 	rm -f dist/*
 	cat setup.py | sed -e 's@>=[0-9.]*@@g' > setup.build.py
 	python setup.build.py sdist
-	mv dist/azurectl-${version}.tar.gz dist/python3-azurectl-${version}.tar.gz
+	mv dist/azurectl-${version}.tar.gz dist/python-azurectl-${version}.tar.gz
 	rm setup.build.py
