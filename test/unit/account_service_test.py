@@ -1,17 +1,30 @@
+from .test_helper import argv_kiwi_tests
+
 import mock
 from mock import patch
-
-
-from .test_helper import raises
-
-from azurectl.azurectl_exceptions import *
-
-import azurectl
-
 from azurectl.account.service import AzureAccount
 from azurectl.config.parser import Config
-
 from collections import namedtuple
+import azurectl
+from pytest import raises
+
+from azurectl.azurectl_exceptions import (
+    AzureConfigVariableNotFound,
+    AzureConfigVariableNotFound,
+    AzureManagementCertificateNotFound,
+    AzureServiceManagementError,
+    AzureServiceManagementError,
+    AzureServiceManagementUrlNotFound,
+    AzureSubscriptionCertificateDecodeError,
+    AzureSubscriptionIdNotFound,
+    AzureSubscriptionIdNotFound,
+    AzureSubscriptionIdNotFound,
+    AzureSubscriptionParseError,
+    AzureSubscriptionParseError,
+    AzureSubscriptionPKCS12DecodeError,
+    AzureSubscriptionPrivateKeyDecodeError,
+    AzureUnrecognizedManagementUrl
+)
 
 
 class TestAzureAccount:
@@ -40,7 +53,6 @@ class TestAzureAccount:
             return_value=mock_service
         )
 
-    @raises(AzureServiceManagementError)
     @patch('azurectl.account.service.ServiceManagementService')
     @patch('azurectl.account.service.dump_privatekey')
     @patch('azurectl.account.service.dump_certificate')
@@ -55,7 +67,8 @@ class TestAzureAccount:
         mock_dump_certificate.return_value = 'abc'
         mock_dump_pkey.return_value = 'abc'
         mock_service.side_effect = AzureServiceManagementError
-        self.account.storage_names()
+        with raises(AzureServiceManagementError):
+            self.account.storage_names()
 
     def test_storage_name(self):
         assert self.account.storage_name() == 'bob'
@@ -63,7 +76,6 @@ class TestAzureAccount:
     def test_storage_container(self):
         assert self.account.storage_container() == 'foo'
 
-    @raises(AzureSubscriptionCertificateDecodeError)
     @patch('azurectl.account.service.dump_privatekey')
     @patch('azurectl.account.service.dump_certificate')
     def test_subscription_cert_decode_error(
@@ -72,9 +84,9 @@ class TestAzureAccount:
         mock_dump_pkey.return_value = b'abc'
         mock_dump_certificate.side_effect = \
             AzureSubscriptionCertificateDecodeError
-        self.account.get_management_service()
+        with raises(AzureSubscriptionCertificateDecodeError):
+            self.account.get_management_service()
 
-    @raises(AzureManagementCertificateNotFound)
     def test_subscription_management_cert_not_found(self):
         account_invalid = AzureAccount(
             Config(
@@ -82,9 +94,9 @@ class TestAzureAccount:
                 filename='../data/config.missing_publishsettings_cert'
             )
         )
-        account_invalid.get_management_service()
+        with raises(AzureManagementCertificateNotFound):
+            account_invalid.get_management_service()
 
-    @raises(AzureSubscriptionIdNotFound)
     @patch('azurectl.account.service.load_pkcs12')
     @patch('azurectl.account.service.dump_privatekey')
     @patch('azurectl.account.service.dump_certificate')
@@ -99,13 +111,13 @@ class TestAzureAccount:
                 filename='../data/config.missing_publishsettings_id'
             )
         )
-        account_invalid.get_management_service()
+        with raises(AzureSubscriptionIdNotFound):
+            account_invalid.get_management_service()
 
     def test_get_management_url(self):
         mgmt_url = self.account.get_management_url()
         assert mgmt_url == 'test.url'
 
-    @raises(AzureServiceManagementUrlNotFound)
     def test_get_management_url_missing(self):
         account_invalid = AzureAccount(
             Config(
@@ -113,7 +125,8 @@ class TestAzureAccount:
                 filename='../data/config.missing_mgmt_url'
             )
         )
-        account_invalid.get_management_url()
+        with raises(AzureServiceManagementUrlNotFound):
+            account_invalid.get_management_url()
 
     @patch('azurectl.account.service.AzureAccount.get_management_url')
     def test_get_blob_service_host_base(self, mock_mgmt_url):
@@ -121,13 +134,12 @@ class TestAzureAccount:
         host_base = self.account.get_blob_service_host_base()
         assert host_base == 'test.url'
 
-    @raises(AzureUnrecognizedManagementUrl)
     @patch('azurectl.account.service.AzureAccount.get_management_url')
     def test_get_blob_service_host_base_with_bad_url(self, mock_mgmt_url):
         mock_mgmt_url.return_value = 'invalid.test.url'
-        host_base = self.account.get_blob_service_host_base()
+        with raises(AzureUnrecognizedManagementUrl):
+            self.account.get_blob_service_host_base()
 
-    @raises(AzureSubscriptionPKCS12DecodeError)
     def test_subscription_pkcs12_error(self):
         account_invalid = AzureAccount(
             Config(
@@ -135,9 +147,9 @@ class TestAzureAccount:
                 filename='../data/config.corrupted_p12_cert'
             )
         )
-        account_invalid.get_management_service()
+        with raises(AzureSubscriptionPKCS12DecodeError):
+            account_invalid.get_management_service()
 
-    @raises(AzureSubscriptionParseError)
     def test_empty_publishsettings(self):
         account_invalid = AzureAccount(
             Config(
@@ -145,9 +157,9 @@ class TestAzureAccount:
                 filename='../data/config.empty_publishsettings'
             )
         )
-        account_invalid.get_management_url()
+        with raises(AzureSubscriptionParseError):
+            account_invalid.get_management_url()
 
-    @raises(AzureSubscriptionParseError)
     def test_missing_publishsettings(self):
         account_invalid = AzureAccount(
             Config(
@@ -155,7 +167,8 @@ class TestAzureAccount:
                 filename='../data/config.missing_publishsettings'
             )
         )
-        account_invalid.get_management_url()
+        with raises(AzureSubscriptionParseError):
+            account_invalid.get_management_url()
 
     @patch('azurectl.account.service.dump_privatekey')
     @patch('azurectl.account.service.dump_certificate')
@@ -191,7 +204,6 @@ class TestAzureAccount:
         )
         assert account.subscription_id() == 'second'
 
-    @raises(AzureSubscriptionPrivateKeyDecodeError)
     def test_publishsettings_invalid_cert(self):
         account_invalid = AzureAccount(
             Config(
@@ -199,9 +211,9 @@ class TestAzureAccount:
                 filename='../data/config.invalid_publishsettings_cert'
             )
         )
-        account_invalid.certificate_filename()
+        with raises(AzureSubscriptionPrivateKeyDecodeError):
+            account_invalid.certificate_filename()
 
-    @raises(AzureSubscriptionIdNotFound)
     def test_config_subscription_id_not_found_in_publishsettings(self):
         account_invalid = AzureAccount(
             Config(
@@ -209,9 +221,9 @@ class TestAzureAccount:
                 filename='../data/config.missing_set_subscription_id'
             )
         )
-        account_invalid.get_management_url()
+        with raises(AzureSubscriptionIdNotFound):
+            account_invalid.get_management_url()
 
-    @raises(AzureSubscriptionIdNotFound)
     def test_config_subscription_id_missing(self):
         account_invalid = AzureAccount(
             Config(
@@ -219,7 +231,8 @@ class TestAzureAccount:
                 filename='../data/config.set_subscription_id_missing_id'
             )
         )
-        account_invalid.get_management_url()
+        with raises(AzureSubscriptionIdNotFound):
+            account_invalid.get_management_url()
 
     def test_config_without_publishsettings(self):
         account = AzureAccount(
@@ -241,23 +254,23 @@ class TestAzureAccount:
         mock_dump_certificate.return_value = b'cert'
         assert self.account.certificate_filename() == 'tempfile'
 
-    @raises(AzureConfigVariableNotFound)
     def test_config_must_have_management_url_or_publishsettings(self):
         account = AzureAccount(
             Config(
                 filename='../data/config.publishsettings_undefined'
             )
         )
-        account.get_management_url()
+        with raises(AzureConfigVariableNotFound):
+            account.get_management_url()
 
-    @raises(AzureConfigVariableNotFound)
     def test_config_must_have_management_pem_file_or_publishsettings(self):
         account = AzureAccount(
             Config(
                 filename='../data/config.publishsettings_undefined'
             )
         )
-        account.certificate_filename()
+        with raises(AzureConfigVariableNotFound):
+            account.certificate_filename()
 
     def test_storage_key(self):
         primary = namedtuple(
@@ -272,12 +285,12 @@ class TestAzureAccount:
         )
         assert self.account.storage_key() == 'foo'
 
-    @raises(AzureServiceManagementError)
     def test_storage_key_error(self):
         self.__mock_management_service(
             'get_storage_account_keys', None, side_effect=Exception
         )
-        self.account.storage_key()
+        with raises(AzureServiceManagementError):
+            self.account.storage_key()
 
     @patch('azurectl.account.service.ServiceManagementService')
     def test_get_management_service(self, mock_service):

@@ -1,15 +1,13 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import mock
 from mock import patch
-from .test_helper import raises, argv_kiwi_tests
-# mocks
 from azurectl.utils.output import DataOutput
 from azurectl.instance.endpoint import Endpoint
 from azurectl.help import Help
-# project
-import azurectl
 from azurectl.commands.compute_endpoint import ComputeEndpointTask
-from azurectl.azurectl_exceptions import *
+import azurectl
 
 
 class TestComputeEndpointTask:

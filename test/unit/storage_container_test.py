@@ -1,18 +1,22 @@
+from .test_helper import argv_kiwi_tests
+
 import datetime
 import sys
 import mock
 from mock import patch
-
 from urllib.parse import urlparse
-
-from .test_helper import raises
-
-from azurectl.azurectl_exceptions import *
+from pytest import raises
 from azurectl.storage.container import Container
-
 import azurectl
-
 from collections import namedtuple
+
+from azurectl.azurectl_exceptions import (
+    AzureCannotInit,
+    AzureContainerCreateError,
+    AzureContainerDeleteError,
+    AzureContainerListContentError,
+    AzureContainerListError
+)
 
 MOCK_STORAGE_NAME = 'mock-storage'
 
@@ -48,11 +52,12 @@ class TestContainer:
         )
         assert container.account_name == self.container.account_name
         assert container.account_key == self.container.account_key
-        assert container.blob_service_host_base == self.container.blob_service_host_base
+        assert container.blob_service_host_base == \
+            self.container.blob_service_host_base
 
-    @raises(AzureCannotInit)
     def test_container_failed_init(self):
-        Container()
+        with raises(AzureCannotInit):
+            Container()
 
     @patch('azurectl.storage.container.BaseBlobService.list_containers')
     def test_list(self, mock_list_containers):
@@ -74,22 +79,22 @@ class TestContainer:
         )
 
     @patch('azurectl.storage.container.BaseBlobService.delete_container')
-    @raises(AzureContainerDeleteError)
     def test_delete_raises(self, mock_delete):
         mock_delete.side_effect = Exception
-        self.container.delete('container_name')
+        with raises(AzureContainerDeleteError):
+            self.container.delete('container_name')
 
     @patch('azurectl.storage.container.BaseBlobService.create_container')
-    @raises(AzureContainerCreateError)
     def test_create_raises(self, mock_create):
         mock_create.side_effect = Exception
-        self.container.create('container_name')
+        with raises(AzureContainerCreateError):
+            self.container.create('container_name')
 
-    @raises(AzureContainerListError)
     @patch('azurectl.storage.container.BaseBlobService.list_containers')
     def test_list_raises(self, mock_list_containers):
         mock_list_containers.side_effect = AzureContainerListError
-        self.container.list()
+        with raises(AzureContainerListError):
+            self.container.list()
 
     @patch('azurectl.storage.container.BaseBlobService.list_blobs')
     def test_content(self, mock_list_blobs):
@@ -97,11 +102,11 @@ class TestContainer:
         assert self.container.content('some-container') == \
             {'some-container': ['a', 'b']}
 
-    @raises(AzureContainerListContentError)
     @patch('azurectl.storage.container.BaseBlobService.list_blobs')
     def test_content_raises(self, mock_list_blobs):
         mock_list_blobs.side_effect = AzureContainerListContentError
-        self.container.content('some-container')
+        with raises(AzureContainerListContentError):
+            self.container.content('some-container')
 
     def test_sas(self):
         container = 'mock-container'

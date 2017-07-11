@@ -1,12 +1,10 @@
+from .test_helper import argv_kiwi_tests
+
 import dateutil.parser
 import sys
 import mock
 from mock import patch
-
 import azurectl
-
-from .test_helper import raises, argv_kiwi_tests
-
 from azurectl.commands.storage_share import StorageShareTask
 
 

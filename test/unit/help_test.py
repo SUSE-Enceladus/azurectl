@@ -1,20 +1,20 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
-
 from mock import patch
-
-from .test_helper import raises
-
 from azurectl.help import Help
-from azurectl.azurectl_exceptions import *
+from pytest import raises
+
+from azurectl.azurectl_exceptions import AzureHelpNoCommandGiven
 
 
 class TestHelp:
     def setup(self):
         self.help = Help()
 
-    @raises(AzureHelpNoCommandGiven)
     def test_show(self):
-        self.help.show(None)
+        with raises(AzureHelpNoCommandGiven):
+            self.help.show(None)
 
     @patch('subprocess.call')
     def test_show_command(self, mock_process):

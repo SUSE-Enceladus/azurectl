@@ -1,9 +1,7 @@
+from .test_helper import argv_kiwi_tests
+
 from mock import patch
-
-from .test_helper import raises
-
 from azurectl.logger import *
-
 from collections import namedtuple
 
 

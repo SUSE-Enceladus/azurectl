@@ -1,20 +1,26 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import mock
 from mock import patch
-
-
-from .test_helper import raises
-
+from pytest import raises
 from azurectl.account.service import AzureAccount
 from azurectl.config.parser import Config
-from azurectl.azurectl_exceptions import *
 from azurectl.instance.virtual_machine import VirtualMachine
-
 from azure.servicemanagement import OSVirtualHardDisk
-
 import azurectl
-
 from collections import namedtuple
+
+from azurectl.azurectl_exceptions import (
+    AzureCustomDataTooLargeError,
+    AzureImageNotReachableByCloudServiceError,
+    AzureStorageNotReachableByCloudServiceError,
+    AzureVmCreateError,
+    AzureVmDeleteError,
+    AzureVmRebootError,
+    AzureVmShutdownError,
+    AzureVmStartError
+)
 
 
 class TestVirtualMachine:
@@ -190,7 +196,6 @@ class TestVirtualMachine:
             'instance-name'
         )
 
-    @raises(AzureVmCreateError)
     def test_create_instance_add_role_raises_on_label(self):
         storage_properties = mock.MagicMock()
         storage_properties.storage_service_properties.location = 'region'
@@ -205,15 +210,14 @@ class TestVirtualMachine:
         image_locations = mock.MagicMock()
         image_locations.location = 'region'
         self.service.get_os_image.return_value = image_locations
+        with raises(AzureVmCreateError):
+            result = self.vm.create_instance(
+                cloud_service_name='cloud-service',
+                disk_name='foo.vhd',
+                system_config=self.system_config,
+                label='some-label'
+            )
 
-        result = self.vm.create_instance(
-            cloud_service_name='cloud-service',
-            disk_name='foo.vhd',
-            system_config=self.system_config,
-            label='some-label'
-        )
-
-    @raises(AzureVmCreateError)
     def test_create_instance_add_role_raises_on_reserved_ip(self):
         storage_properties = mock.MagicMock()
         storage_properties.storage_service_properties.location = 'region'
@@ -228,15 +232,14 @@ class TestVirtualMachine:
         image_locations = mock.MagicMock()
         image_locations.location = 'region'
         self.service.get_os_image.return_value = image_locations
+        with raises(AzureVmCreateError):
+            result = self.vm.create_instance(
+                cloud_service_name='cloud-service',
+                disk_name='foo.vhd',
+                system_config=self.system_config,
+                reserved_ip_name='test_reserved_ip_name'
+            )
 
-        result = self.vm.create_instance(
-            cloud_service_name='cloud-service',
-            disk_name='foo.vhd',
-            system_config=self.system_config,
-            reserved_ip_name='test_reserved_ip_name'
-        )
-
-    @raises(AzureVmCreateError)
     def test_create_instance_raise_vm_create_error(self):
         self.service.get_deployment_by_name.side_effect = Exception(
             '<Code>ResourceNotFound</Code><Message>No deployments were found'
@@ -257,11 +260,11 @@ class TestVirtualMachine:
 
         self.service.create_virtual_machine_deployment.side_effect = \
             AzureVmCreateError
-        result = self.vm.create_instance(
-            'cloud-service', 'foo.vhd', self.system_config
-        )
+        with raises(AzureVmCreateError):
+            result = self.vm.create_instance(
+                'cloud-service', 'foo.vhd', self.system_config
+            )
 
-    @raises(AzureVmCreateError)
     def test_create_instance_raise_get_deployment_error(self):
         self.service.get_deployment_by_name.side_effect = Exception
         storage_properties = mock.MagicMock()
@@ -277,9 +280,10 @@ class TestVirtualMachine:
         image_locations = mock.MagicMock()
         image_locations.location = 'region'
         self.service.get_os_image.return_value = image_locations
-        result = self.vm.create_instance(
-            'cloud-service', 'foo.vhd', self.system_config
-        )
+        with raises(AzureVmCreateError):
+            result = self.vm.create_instance(
+                'cloud-service', 'foo.vhd', self.system_config
+            )
 
     def test_delete_instance(self):
         self.vm.delete_instance('cloud-service', 'foo')
@@ -305,7 +309,6 @@ class TestVirtualMachine:
         self.service.get_hosted_service_properties.side_effect = Exception
         assert self.vm.instance_status('cloud-service') == 'Undefined'
 
-    @raises(AzureStorageNotReachableByCloudServiceError)
     def test_create_instance_raise_storage_not_reachable_error(self):
         storage_properties = mock.MagicMock()
         storage_properties.storage_service_properties.location = 'regionA'
@@ -316,12 +319,11 @@ class TestVirtualMachine:
         service_properties.hosted_service_properties.location = 'regionB'
         self.service.get_hosted_service_properties.return_value = \
             service_properties
+        with raises(AzureStorageNotReachableByCloudServiceError):
+            result = self.vm.create_instance(
+                'foo', 'some-region', 'foo.vhd', self.system_config
+            )
 
-        result = self.vm.create_instance(
-            'foo', 'some-region', 'foo.vhd', self.system_config
-        )
-
-    @raises(AzureImageNotReachableByCloudServiceError)
     def test_create_instance_raise_image_not_reachable_error(self):
         storage_properties = mock.MagicMock()
         storage_properties.storage_service_properties.location = 'regionA'
@@ -336,12 +338,11 @@ class TestVirtualMachine:
         image_locations = mock.MagicMock()
         image_locations.location = 'regionB'
         self.service.get_os_image.return_value = image_locations
+        with raises(AzureImageNotReachableByCloudServiceError):
+            result = self.vm.create_instance(
+                'foo', 'some-region', 'foo.vhd', self.system_config
+            )
 
-        result = self.vm.create_instance(
-            'foo', 'some-region', 'foo.vhd', self.system_config
-        )
-
-    @raises(AzureImageNotReachableByCloudServiceError)
     def test_create_instance_raise_image_not_existing(self):
         storage_properties = mock.MagicMock()
         storage_properties.storage_service_properties.location = 'regionA'
@@ -353,34 +354,34 @@ class TestVirtualMachine:
         self.service.get_hosted_service_properties.return_value = \
             service_properties
         self.service.get_os_image.side_effect = Exception
-        result = self.vm.create_instance(
-            'foo', 'some-region', 'foo.vhd', self.system_config
-        )
+        with raises(AzureImageNotReachableByCloudServiceError):
+            result = self.vm.create_instance(
+                'foo', 'some-region', 'foo.vhd', self.system_config
+            )
 
-    @raises(AzureCustomDataTooLargeError)
     def test_validates_custom_data_length(self):
         self.vm._VirtualMachine__max_custom_data_len = mock.Mock(return_value=3)
         self.vm.create_linux_configuration(custom_data='foo')
-
         self.vm._VirtualMachine__max_custom_data_len = mock.Mock(return_value=0)
-        self.vm.create_linux_configuration(custom_data='foo')
+        with raises(AzureCustomDataTooLargeError):
+            self.vm.create_linux_configuration(custom_data='foo')
 
-    @raises(AzureVmDeleteError)
     def test_delete_instance_raise_vm_delete_error(self):
         self.service.delete_role.side_effect = AzureVmDeleteError
-        self.vm.delete_instance('cloud-service', 'foo')
+        with raises(AzureVmDeleteError):
+            self.vm.delete_instance('cloud-service', 'foo')
 
-    @raises(AzureVmRebootError)
     def test_reboot_instance_raise_vm_reboot_error(self):
         self.service.reboot_role_instance.side_effect = AzureVmRebootError
-        self.vm.reboot_instance('cloud-service', 'foo')
+        with raises(AzureVmRebootError):
+            self.vm.reboot_instance('cloud-service', 'foo')
 
-    @raises(AzureVmShutdownError)
     def test_shutdown_instance_raise_vm_shutdown_error(self):
         self.service.shutdown_role.side_effect = AzureVmShutdownError
-        self.vm.shutdown_instance('cloud-service', 'foo')
+        with raises(AzureVmShutdownError):
+            self.vm.shutdown_instance('cloud-service', 'foo')
 
-    @raises(AzureVmStartError)
     def test_start_instance_raise_vm_shutdown_error(self):
         self.service.start_role.side_effect = AzureVmStartError
-        self.vm.start_instance('cloud-service', 'foo')
+        with raises(AzureVmStartError):
+            self.vm.start_instance('cloud-service', 'foo')

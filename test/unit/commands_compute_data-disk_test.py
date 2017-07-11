@@ -1,11 +1,13 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import mock
 from mock import patch
-from .test_helper import raises, argv_kiwi_tests
-
 import azurectl
 import importlib
-from azurectl.azurectl_exceptions import *
+from pytest import raises
+
+from azurectl.azurectl_exceptions import AzureInvalidCommand
 
 
 class TestComputeDataDiskTask:
@@ -172,7 +174,6 @@ class TestComputeDataDiskTask:
             blob_name=self.disk_filename
         )
 
-    @raises(AzureInvalidCommand)
     def test_disk_name_or_blob_name_is_required(self):
         self.__init_command_args({
             'attach': True,
@@ -181,8 +182,8 @@ class TestComputeDataDiskTask:
             '--label': self.disk_label,
             '--lun': format(self.lun)
         })
-        # when
-        self.task.process()
+        with raises(AzureInvalidCommand):
+            self.task.process()
 
     def test_attach_with_cache_method(self):
         sets = [

@@ -1,11 +1,10 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import mock
 from mock import patch
-
-
-from .test_helper import raises, argv_kiwi_tests
-
 import azurectl
+from pytest import raises
 from azurectl.commands.compute_image import ComputeImageTask
 
 
@@ -146,7 +145,6 @@ class TestComputeImageTask:
 
     @patch('azurectl.commands.compute_image.BackgroundScheduler')
     @patch('azurectl.commands.compute_image.DataOutput')
-    @raises(SystemExit)
     def test_process_compute_image_replicate_wait_interrupted(
             self, mock_out, mock_job
     ):
@@ -155,7 +153,8 @@ class TestComputeImageTask:
         self.task.command_args['--wait'] = True
         self.image.wait_for_replication_completion.side_effect = \
             KeyboardInterrupt
-        self.task.process()
+        with raises(SystemExit):
+            self.task.process()
 
     @patch('azurectl.commands.compute_image.DataOutput')
     def test_process_compute_image_replication_status(self, mock_out):

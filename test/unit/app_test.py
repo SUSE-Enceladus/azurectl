@@ -1,8 +1,8 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import pytest
 import mock
-from .test_helper import raises
-
 from azurectl.app import App
 
 

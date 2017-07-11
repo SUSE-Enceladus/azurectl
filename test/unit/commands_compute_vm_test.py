@@ -1,13 +1,11 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import mock
 from mock import patch
 from mock import call
-
-from .test_helper import raises, argv_kiwi_tests
-
 import azurectl
 from azurectl.commands.compute_vm import ComputeVmTask
-from azurectl.azurectl_exceptions import *
 
 
 class TestComputeVmTask:

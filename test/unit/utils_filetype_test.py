@@ -1,6 +1,6 @@
-from azurectl.utils.filetype import FileType
+from .test_helper import argv_kiwi_tests
 
-from azurectl.azurectl_exceptions import *
+from azurectl.utils.filetype import FileType
 
 
 class TestFileType:

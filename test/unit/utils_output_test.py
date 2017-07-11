@@ -1,12 +1,10 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 from mock import patch
-
 import mock
-from .test_helper import raises
-
 from azurectl.utils.output import DataOutput
 from azurectl.utils.collector import DataCollector
-from azurectl.logger import log
 import json
 
 

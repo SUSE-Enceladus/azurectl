@@ -1,10 +1,7 @@
+from .test_helper import argv_kiwi_tests
 
 from mock import patch
-
-from .test_helper import raises
 import mock
-
-from azurectl.azurectl_exceptions import *
 from azurectl.defaults import Defaults
 
 

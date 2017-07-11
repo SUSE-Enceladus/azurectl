@@ -1,11 +1,9 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import mock
 from collections import namedtuple
 from mock import patch
-
-
-from .test_helper import raises, argv_kiwi_tests
-
 import azurectl
 from azurectl.account.service import AzureAccount
 from azurectl.commands.compute_shell import ComputeShellTask

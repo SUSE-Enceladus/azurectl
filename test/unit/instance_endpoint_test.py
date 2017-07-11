@@ -1,26 +1,32 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import mock
 import random
 from collections import namedtuple
 from datetime import datetime
 from mock import patch
-from .test_helper import raises
-# mocks
+from pytest import raises
 from azure.servicemanagement.models import (
     PersistentVMRole,
     ConfigurationSets,
     ConfigurationSet,
     ConfigurationSetInputEndpoint,
     DataVirtualHardDisks,
-    OSVirtualHardDisk,
-
+    OSVirtualHardDisk
 )
-# project
 from azurectl.account.service import AzureAccount
-from azurectl.azurectl_exceptions import *
 from azurectl.config.parser import Config
 from azurectl.instance.endpoint import Endpoint
 import azurectl
+
+from azurectl.azurectl_exceptions import (
+    AzureEndpointCreateError,
+    AzureEndpointDeleteError,
+    AzureEndpointListError,
+    AzureEndpointShowError,
+    AzureEndpointUpdateError
+)
 
 
 class TestEndpoint:
@@ -87,12 +93,10 @@ class TestEndpoint:
         }
 
     def test_create(self):
-        # given
         self.service.update_role.return_value = self.my_request
         mock_role = self.mock_role(has_endpoint=False)
         self.service.get_role = mock.Mock(return_value=mock_role)
         endpoint_len = 0
-        # when
         result = self.endpoint.create(
             self.udp_endpoint_name,
             self.udp_port,
@@ -104,7 +108,6 @@ class TestEndpoint:
             mock_role.configuration_sets[0].input_endpoints
         )
         new_endpoint = mock_role.configuration_sets[0].input_endpoints[-1]
-        # then
         assert result_endpoint_length == endpoint_len + 1
         assert new_endpoint.name == self.udp_endpoint_name
         assert new_endpoint.port == self.udp_port
@@ -121,26 +124,21 @@ class TestEndpoint:
         )
         assert result == self.my_request.request_id
 
-    # then
-    @raises(AzureEndpointCreateError)
     def test_create_upstream_exception(self):
-        # given
         self.service.update_role.side_effect = Exception
-        # when
-        result = self.endpoint.create(
-            self.endpoint_name,
-            self.port,
-            self.instance_port,
-            self.protocol,
-            self.idle_timeout
-        )
+        with raises(AzureEndpointCreateError):
+            result = self.endpoint.create(
+                self.endpoint_name,
+                self.port,
+                self.instance_port,
+                self.protocol,
+                self.idle_timeout
+            )
 
     def test_update(self):
-        # given
         self.service.update_role.return_value = self.my_request
         mock_role = self.mock_role()
         self.service.get_role = mock.Mock(return_value=mock_role)
-        # when
         result = self.endpoint.update(
             self.endpoint_name,
             self.udp_port,
@@ -149,7 +147,6 @@ class TestEndpoint:
             self.idle_timeout
         )
         new_endpoint = mock_role.configuration_sets[0].input_endpoints[0]
-        # then
         assert new_endpoint.name == self.endpoint_name
         assert new_endpoint.port == self.udp_port
         assert new_endpoint.local_port == self.instance_port
@@ -165,97 +162,70 @@ class TestEndpoint:
         )
         assert result == self.my_request.request_id
 
-    # then
-    @raises(AzureEndpointUpdateError)
     def test_update_upstream_exception(self):
-        # given
         self.service.update_role.side_effect = Exception
-        # when
-        result = self.endpoint.update(
-            self.udp_endpoint_name,
-            self.port,
-            self.instance_port,
-            self.protocol,
-            self.idle_timeout
-        )
+        with raises(AzureEndpointUpdateError):
+            result = self.endpoint.update(
+                self.udp_endpoint_name,
+                self.port,
+                self.instance_port,
+                self.protocol,
+                self.idle_timeout
+            )
 
-    @raises(AzureEndpointUpdateError)
     def test_update_endpoint_no_endpoints(self):
-        # given
         mock_role = self.mock_role(has_endpoint=False)
         self.service.get_role = mock.Mock(return_value=mock_role)
         self.service.update_role.return_value = self.my_request
-
-        # when
-        self.endpoint.update(
-            self.udp_endpoint_name,
-            self.port,
-            self.instance_port,
-            self.udp_protocol,
-            self.idle_timeout
-        )
+        with raises(AzureEndpointUpdateError):
+            self.endpoint.update(
+                self.udp_endpoint_name,
+                self.port,
+                self.instance_port,
+                self.udp_protocol,
+                self.idle_timeout
+            )
 
     def test_show(self):
-        # given
         expected = self.create_expected_endpoint_output()
-        # when
         result = self.endpoint.show(self.endpoint_name)
-        # then
         assert result == expected
 
-    # then
-    @raises(AzureEndpointShowError)
     def test_show_upstream_exception(self):
-        # given
         self.service.get_role.side_effect = Exception
-        # when
-        self.endpoint.show(self.endpoint_name)
+        with raises(AzureEndpointShowError):
+            self.endpoint.show(self.endpoint_name)
 
-    # then
-    @raises(AzureEndpointShowError)
     def test_show_not_found(self):
-        # given
         self.service.get_role = mock.Mock(
             return_value=self.mock_role(has_endpoint=False)
         )
-        # when
-        self.endpoint.show(self.endpoint_name)
+        with raises(AzureEndpointShowError):
+            self.endpoint.show(self.endpoint_name)
 
     def test_list(self):
-        # given
         expected = [
             self.create_expected_endpoint_output()
         ]
-        # when
         result = self.endpoint.list()
-        # then
         assert result == expected
 
     def test_list_no_endpoints(self):
-        # given
         self.endpoint.delete(self.endpoint_name)
         expected = []
-        # when
         result = self.endpoint.list()
-        # then
         assert result == expected
 
-    # then
-    @raises(AzureEndpointListError)
     def test_list_upstream_exceptions(self):
-        # given
         self.service.get_role.side_effect = Exception
-        # when
-        self.endpoint.list()
+        with raises(AzureEndpointListError):
+            self.endpoint.list()
 
     def test_delete(self):
-        # given
         mock_role = self.mock_role()
         self.service.get_role = mock.Mock(return_value=mock_role)
         self.service.update_role.return_value = self.my_request
-        # when
         result = self.endpoint.delete(self.endpoint_name)
-        # then
         assert result == self.my_request.request_id
         self.service.update_role.assert_called_once_with(
             self.cloud_service_name,
@@ -267,29 +237,21 @@ class TestEndpoint:
             data_virtual_hard_disks=mock_role.data_virtual_hard_disks
         )
 
-    # then
-    @raises(AzureEndpointDeleteError)
     def test_delete_with_upstream_exception(self):
-        # given
         self.service.update_role.side_effect = Exception
-        # when
-        self.endpoint.delete(self.endpoint_name)
+        with raises(AzureEndpointDeleteError):
+            self.endpoint.delete(self.endpoint_name)
 
-    @raises(AzureEndpointDeleteError)
     def test_delete_endpoint_no_endpoints(self):
-        # given
         mock_role = self.mock_role(has_endpoint=False)
         self.service.get_role = mock.Mock(return_value=mock_role)
         self.service.update_role.return_value = self.my_request
+        with raises(AzureEndpointDeleteError):
+            self.endpoint.delete('foo')
 
-        # when
-        self.endpoint.delete('foo')
-
-    @raises(AzureEndpointDeleteError)
     def test_delete_endpoint_not_found(self):
-        # given
         mock_role = self.mock_role()
         self.service.get_role = mock.Mock(return_value=mock_role)
         self.service.update_role.return_value = self.my_request
-
-        self.endpoint.delete('foo')
+        with raises(AzureEndpointDeleteError):
+            self.endpoint.delete('foo')

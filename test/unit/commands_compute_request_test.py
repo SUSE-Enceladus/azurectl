@@ -1,12 +1,9 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import mock
 from mock import patch
-
-
-from .test_helper import raises, argv_kiwi_tests
-
 import azurectl
-from azurectl.azurectl_exceptions import *
 from azurectl.commands.compute_request import ComputeRequestTask
 
 

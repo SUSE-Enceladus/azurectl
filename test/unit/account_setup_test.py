@@ -1,8 +1,12 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import mock
 from mock import patch
 from mock import call
-from .test_helper import raises
+from pytest import raises
+from azurectl.account.setup import AccountSetup
+import azurectl
 
 from azurectl.azurectl_exceptions import (
     AzureConfigParseError,
@@ -11,9 +15,6 @@ from azurectl.azurectl_exceptions import (
     AzureConfigPublishSettingsError,
     AzureConfigWriteError
 )
-from azurectl.account.setup import AccountSetup
-
-import azurectl
 
 
 class TestAccountSetup:
@@ -314,37 +315,37 @@ class TestAccountSetup:
         assert self.setup.remove_account('foofoo') is False
         assert self.setup.remove_region('foofoo') is False
 
-    @raises(AzureConfigWriteError)
     @patch('builtins.open')
     def test_write_raise(self, mock_open):
         mock_open.side_effect = AzureConfigWriteError
         self.setup.filename = '/some-config'
-        self.setup.write()
+        with raises(AzureConfigWriteError):
+            self.setup.write()
 
-    @raises(AzureConfigParseError)
     def test_parse_raise(self):
-        AccountSetup('../data/blob.xz')
+        with raises(AzureConfigParseError):
+            AccountSetup('../data/blob.xz')
 
-    @raises(AzureConfigPublishSettingsError)
     def test_add_raise_publish_settings_error(self):
-        self.setup.add_account_with_publishsettings(
-            'xxx', '../data/does-not-exist'
-        )
+        with raises(AzureConfigPublishSettingsError):
+            self.setup.add_account_with_publishsettings(
+                'xxx', '../data/does-not-exist'
+            )
 
-    @raises(AzureConfigAddAccountSectionError)
     def test_add_account_with_publishsettings_raise(self):
-        self.setup.add_account_with_publishsettings(
-            'bob', '../data/publishsettings'
-        )
+        with raises(AzureConfigAddAccountSectionError):
+            self.setup.add_account_with_publishsettings(
+                'bob', '../data/publishsettings'
+            )
 
-    @raises(AzureConfigAddAccountSectionError)
     def test_add_account_with_management_cert_raise(self):
-        self.setup.add_account_with_management_cert(
-            'bob', '../data/pemfile', 'http://test.url', 'id1234'
-        )
+        with raises(AzureConfigAddAccountSectionError):
+            self.setup.add_account_with_management_cert(
+                'bob', '../data/pemfile', 'http://test.url', 'id1234'
+            )
 
-    @raises(AzureConfigAddRegionSectionError)
     def test_add_region_raise(self):
-        self.setup.add_region(
-            'East US 2', 'some-region', 'storage'
-        )
+        with raises(AzureConfigAddRegionSectionError):
+            self.setup.add_region(
+                'East US 2', 'some-region', 'storage'
+            )

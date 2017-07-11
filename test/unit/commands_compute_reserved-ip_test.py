@@ -1,13 +1,10 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import mock
 from mock import patch
-
-
-from .test_helper import raises, argv_kiwi_tests
-
 import azurectl
 import importlib
-from azurectl.azurectl_exceptions import *
 
 
 class TestComputeReservedIpTask:

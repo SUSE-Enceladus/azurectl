@@ -1,13 +1,10 @@
-import mock
-
-from mock import patch
-
-from .test_helper import raises
-
-from azurectl.azurectl_exceptions import *
-from azurectl.config.file_path import ConfigFilePath
+from .test_helper import argv_kiwi_tests
 
 import os
+import mock
+from mock import patch
+from azurectl.azurectl_exceptions import *
+from azurectl.config.file_path import ConfigFilePath
 
 
 class TestConfigFilePath:

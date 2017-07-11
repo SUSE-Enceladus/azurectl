@@ -1,10 +1,13 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
-
-
-from .test_helper import raises, argv_kiwi_tests
-
 from azurectl.cli import Cli
-from azurectl.azurectl_exceptions import *
+from pytest import raises
+from azurectl.azurectl_exceptions import (
+    AzureLoadCommandUndefined,
+    AzureCommandNotLoaded,
+    AzureUnknownServiceName
+)
 
 
 class TestCli:
@@ -69,26 +72,26 @@ class TestCli:
     def test_load_command(self):
         assert self.cli.load_command() == self.loaded_command
 
-    @raises(SystemExit)
     def test_load_command_unknown(self):
         self.cli.loaded = False
         self.cli.all_args['<command>'] = 'foo'
-        self.cli.load_command()
+        with raises(SystemExit):
+            self.cli.load_command()
 
-    @raises(AzureLoadCommandUndefined)
     def test_load_command_undefined(self):
         self.cli.loaded = False
         self.cli.all_args['<command>'] = None
-        self.cli.load_command()
+        with raises(AzureLoadCommandUndefined):
+            self.cli.load_command()
 
-    @raises(AzureCommandNotLoaded)
     def test_get_command_args_not_loaded(self):
         self.cli.loaded = False
-        self.cli.get_command_args()
+        with raises(AzureCommandNotLoaded):
+            self.cli.get_command_args()
 
-    @raises(AzureUnknownServiceName)
     def test_get_servicename_unknown(self):
         self.cli.all_args['compute'] = False
         self.cli.all_args['setup'] = False
         self.cli.all_args['storage'] = False
-        self.cli.get_servicename()
+        with raises(AzureUnknownServiceName):
+            self.cli.get_servicename()

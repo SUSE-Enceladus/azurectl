@@ -1,32 +1,25 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import mock
-
 from mock import patch
-
 import logging
-
-from .test_helper import raises, argv_kiwi_tests
-
 import azurectl
-
 from azurectl.commands.base import CliTask
-from azurectl.azurectl_exceptions import *
-
 from azure.servicemanagement.models import Operation
-
+from pytest import raises
 
 class TestCliTask:
     def teardown(self):
         sys.argv = argv_kiwi_tests
 
-    @raises(SystemExit)
     @patch('azurectl.commands.base.Help.show')
     def test_show_help(self, help_show):
         sys.argv = [
             sys.argv[0], 'help'
         ]
-        CliTask()
-        help_show.assert_called_once_with('azurectl')
+        with raises(SystemExit):
+            CliTask()
 
     @patch('azurectl.commands.base.Cli.show_help')
     @patch('azurectl.logger.log.setLevel')

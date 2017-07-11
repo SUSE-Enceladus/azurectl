@@ -1,13 +1,13 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
 import mock
 from mock import patch
-
-
-from .test_helper import raises, argv_kiwi_tests
-
 import azurectl
-from azurectl.azurectl_exceptions import *
+from pytest import raises
 from azurectl.commands.setup_account import SetupAccountTask
+
+from azurectl.azurectl_exceptions import AzureAccountConfigurationError
 
 
 class TestSetupAccountTask:
@@ -123,7 +123,6 @@ class TestSetupAccountTask:
         )
 
     @patch('azurectl.commands.setup_account.Config')
-    @raises(AzureAccountConfigurationError)
     def test_process_setup_configure_account_existing(self, mock_config):
         self.__init_command_args()
         self.task.command_args['configure'] = True
@@ -132,7 +131,8 @@ class TestSetupAccountTask:
             return_value=True
         )
         mock_config.return_value = default_config
-        self.task.process()
+        with raises(AzureAccountConfigurationError):
+            self.task.process()
 
     @patch('azurectl.commands.setup_account.Config')
     def test_process_setup_configure_account_no_default_exists(
@@ -157,7 +157,6 @@ class TestSetupAccountTask:
     @patch('azurectl.commands.setup_account.Config')
     @patch('azurectl.commands.setup_account.StorageAccount')
     @patch('azurectl.commands.setup_account.Container')
-    @raises(AzureAccountConfigurationError)
     def test_process_setup_configure_and_create_account_failed(
         self, mock_container, mock_storage, mock_config, mock_account_azure
     ):
@@ -171,7 +170,8 @@ class TestSetupAccountTask:
         mock_storage.return_value = storage_account
         self.task.load_config = mock.Mock()
         self.task.config = mock.Mock()
-        self.task.process()
+        with raises(AzureAccountConfigurationError):
+            self.task.process()
 
     @patch('azurectl.commands.setup_account.AzureAccount')
     @patch('azurectl.commands.setup_account.Config')

@@ -1,8 +1,6 @@
+from .test_helper import argv_kiwi_tests
+
 import sys
-
-
-from .test_helper import raises
-
 from azurectl.utils.collector import DataCollector
 
 
