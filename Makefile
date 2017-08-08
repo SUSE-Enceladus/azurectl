@@ -45,6 +45,9 @@ build: flake8 test completion doc
 		> dist/python3-azurectl.spec
 	rm -rf dist/azurectl-${version}
 
+pypi: clean test
+	python setup.py sdist upload
+
 clean:
 	${MAKE} -C doc/man clean
 	find -name *.pyc | xargs rm -f
