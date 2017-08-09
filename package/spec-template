@@ -1,6 +1,21 @@
 #
 # spec file for package python3-azurectl
 #
+# Copyright (c) 2017 SUSE LINUX GmbH, Nuernberg, Germany.
+#
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. The license for this file, and modifications and additions to the
+# file, is the same license as for the pristine package itself (unless the
+# license for the pristine package is not an Open Source License, in which
+# case the license is the MIT License). An "Open Source License" is a
+# license that conforms to the Open Source Definition (Version 1.9)
+# published by the Open Source Initiative.
+
+# Please submit bugfixes or comments via http://bugs.opensuse.org/
+#
+
+
 Name:           python3-azurectl
 Version:        %%VERSION
 Release:        0
@@ -12,16 +27,16 @@ Source:         python3-azurectl-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
-Requires:       python3-docopt
-Requires:       python3-APScheduler
-Requires:       python3-azure-storage >= 0.30.0
-Requires:       python3-azure-servicemanagement-legacy
-Requires:       python3-python-dateutil
-Requires:       python3-pyOpenSSL
-Requires:       python3-cryptography
-Requires:       python3-setuptools
 Requires:       man
 Requires:       openssl
+Requires:       python3-APScheduler
+Requires:       python3-azure-servicemanagement-legacy
+Requires:       python3-azure-storage >= 0.30.0
+Requires:       python3-cryptography
+Requires:       python3-docopt
+Requires:       python3-pyOpenSSL
+Requires:       python3-python-dateutil
+Requires:       python3-setuptools
 BuildArch:      noarch
 
 # Package renamed in SLE 12, do not remove Provides, Obsolete directives
@@ -56,4 +71,5 @@ done
 %{python3_sitelib}/*
 %config /etc/bash_completion.d/azurectl.sh
 %doc %{_mandir}/man1/*
+
 %changelog
