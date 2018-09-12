@@ -85,14 +85,14 @@ information from the Publish Settings file specified in the configuration
 file.
 
 To download the Publish Settings file for your account visit
-https://manage.windowsazure.com/publishsettings . If you are already
+https://portal.azure.com/#blade/Microsoft_Azure_ClassicResources/PublishingProfileBlade . If you are already
 logged in, the Publish Settings file for the corresponding account
 will be offered as download, otherwise you will be redirected to
 the login page and need to login with your Azure account.
 
-Please note, if you have multiple accounts for Azure and you're already logged
+_Please note, if you have multiple accounts for Azure and you're already logged
 in, check that you are logged in with the account for which you would like
-to download the Publish Settings file.
+to download the Publish Settings file. If you have multiple subscriptions on your account, please set the default subscription to the one you'd like to download publishsettings for, before fetching your Publish Settings._
 
 #### Management Certificate
 
