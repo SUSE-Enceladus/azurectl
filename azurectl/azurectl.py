@@ -29,10 +29,10 @@ def extras(help, version, options, doc):
     """
     if help and any((o.name in ('-h', '--help')) and o.value for o in options):
         usage(doc.strip("\n"))
-        sys.exit(1)
+        sys.exit(0)
     if version and any(o.name == '--version' and o.value for o in options):
         print(version)
-        sys.exit()
+        sys.exit(0)
 
 
 def main():
@@ -51,9 +51,9 @@ def main():
         # exception caught by docopt, results in usage message
         usage(format(e))
         sys.exit(1)
-    except SystemExit:
+    except SystemExit as e:
         # user exception, program aborted by user
-        sys.exit(1)
+        sys.exit(e)
     except Exception:
         # exception we did no expect, show python backtrace
         logger.log.error('Unexpected error:')
