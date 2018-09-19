@@ -11,7 +11,14 @@
 
 -r .virtualenv.requirements.txt
 
+# setuptools for pypi upload
+setuptools
+
+# virtualenv-based automation of test activities
+tox
+
 pytest
 pytest-cov
+
 mock
 flake8

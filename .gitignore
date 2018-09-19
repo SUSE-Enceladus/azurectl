@@ -9,6 +9,7 @@ completion/azurectl.sh
 *.so
 
 # Distribution / packaging
+.pytest_cache/
 .Python
 env/
 .env3/
