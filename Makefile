@@ -14,13 +14,8 @@ install:
 
 .PHONY: test
 test:
-	cd test/unit && py.test --no-cov-on-fail --cov=azurectl --cov-report=term-missing --cov-fail-under=100
-
-list_tests:
-	@for i in test/unit/*_test.py; do basename $$i;done | sort
-
-%.py:
-	cd test/unit && py.test -s $@
+	tox -e unit_py3_4
+	tox -e unit_py3_6
 
 .PHONY: completion
 completion:
