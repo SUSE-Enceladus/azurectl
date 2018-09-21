@@ -5,7 +5,7 @@ all:
 	${MAKE} -C doc/man all
 
 flake8:
-	flake8
+	tox -e check
 
 install:
 	python setup.py install
