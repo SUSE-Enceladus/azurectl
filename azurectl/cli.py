@@ -147,7 +147,7 @@ class Cli(object):
             for service_command in self.__get_command_implementations(service):
                 print('%s azurectl %s' % (prefix, service_command))
                 prefix = '      '
-            raise SystemExit
+            raise SystemExit(1)
         self.loaded = importlib.import_module(
             'azurectl.commands.' + service + '_' + command
         )
